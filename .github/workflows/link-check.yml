@@ -1,0 +1,36 @@
+name: Link Check (site & docs)
+
+on:
+  push:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 13 * * 1"  # every Monday 9:00am ET
+
+jobs:
+  linkchecker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Install lychee (broken-link checker)
+        uses: lycheeverse/lychee-action@v1
+        with:
+          # Scan all Markdown & HTML in the repo
+          args: >-
+            --verbose
+            --require-https
+            --no-progress
+            --timeout 20
+            --retry-wait-time 2
+            --max-retries 2
+            "**/*.md" "**/*.html"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: link-check-report
+          path: .lychee/log.md
