@@ -1,92 +1,183 @@
-# 518 Main St Parking — Timeline (Public)
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>518 Main – Parking Timeline</title>
+<style>
+  :root{
+    --ink:#0f172a;         /* slate-900 */
+    --muted:#475569;       /* slate-600 */
+    --blue:#1d4ed8;        /* blue-700 */
+    --blue-soft:#dbeafe;   /* blue-100 */
+    --green-soft:#dcfce7;  /* green-100 */
+    --amber-soft:#fef3c7;  /* amber-100 */
+    --card:#ffffff;
+    --line:#e5e7eb;        /* slate-200 */
+  }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font:18px/1.6 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple Color Emoji","Segoe UI Emoji";
+    color:var(--ink);
+    background:#fff;
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:28px 16px 64px}
+  header{margin-bottom:10px}
+  h1{margin:0 0 6px;font-size:28px;line-height:1.2}
+  .sub{color:var(--muted);font-size:15px}
 
-## 1983-06-16 — Mashburns sign first lease
-1. Initial lease for 518 Main recorded. Evidence: [Open](./exhibits/Emails Related To/Mashburn 1983 Lease 518 Main.pdf)
+  /* Markdown result area */
+  main{margin-top:14px}
+  main h2{
+    font-size:22px; line-height:1.25; margin:28px 0 8px; padding:8px 0;
+    border-bottom:1px solid var(--line);
+  }
+  /* We’ll wrap parts of the H2 via JS for styling */
+  .date-chip{font-weight:900;color:var(--blue)}
+  .desc-chip{font-weight:800;color:var(--muted)}
+  /* H3 (if any) */
+  main h3{font-size:18px;margin:18px 0 8px}
 
-## 1987-06-25 — Mashburns purchase from GUMC
-1. Deed records transfer from GUMC to Mashburns. Evidence: [Open](./exhibits/Deeds/Mashburn 1987 Deed 518 Main.pdf)
+  /* Ordered lists (exhibits / points) */
+  ol{padding-left:24px;margin:8px 0 20px}
+  ol>li{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:4px solid var(--blue);
+    border-radius:10px;
+    padding:10px 12px;
+    margin:10px 0;
+    list-style-position:outside;
+  }
+  /* Gentle color cues by position (1,2,3, then loop) */
+  ol>li:nth-child(3n+1){ background:var(--blue-soft) }
+  ol>li:nth-child(3n+2){ background:var(--green-soft) }
+  ol>li:nth-child(3n){   background:var(--amber-soft) }
 
-## 2020-05-30 — Listing engagement begins
-1. Mashburns engage Kirk Douglass to market 518 Main. Notes/Listing docs: [Open](./exhibits/Listing/Listing Engagement 2020-05-30.pdf)
+  /* Links */
+  a{color:var(--blue);text-decoration:underline;text-underline-offset:2px}
+  a:hover{text-decoration-thickness:2px}
 
-## 2020-06-06 — Parking parameters discussed with GUMC
-1. Phone notes re: weekday use, Sunday mornings limited. Email summary: [Open](./exhibits/Emails Related To/June_6_2020 email to Mary Mashburn regarding parking.pdf)
+  /* TOC */
+  .toc{
+    border:1px solid var(--line); background:#f8fafc; padding:10px 12px;
+    border-radius:12px; margin:12px 0 18px;
+  }
+  .toc h2{font-size:16px;margin:0 0 6px;border:0;padding:0;color:var(--muted)}
+  .toc a{margin-right:12px;font-size:14px}
+  @media (max-width:640px){
+    body{font-size:17px}
+    h1{font-size:24px}
+    main h2{font-size:20px}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>518 Main Street — Parking Timeline</h1>
+      <div class="sub">Readable, color-coded, and link-friendly. Edit only <code>timeline.md</code>.</div>
+    </header>
 
-## 2020-06-12 — Listing documents finalized
-1. 518 Main listing packet prepared. Agent full sheet: [Open](./exhibits/Listing/Agent Full 2020-06-12.pdf)
+    <div class="toc" id="toc" hidden>
+      <h2>Jump to date</h2>
+      <nav id="toc-links"></nav>
+    </div>
 
-## 2020-10-06 — Notice of in-contract; parking plan
-1. Douglass emails GUMC (Tim Stauffer) re: purchase & prior parameters. Email: [Open](./exhibits/Emails Related To/1st 518 Main Parking email to Tim Stauffer_GUMC.pdf)
+    <main id="content">
+      <div style="border:1px solid var(--line);border-radius:10px;padding:12px;">
+        Loading timeline… If this remains, add <code>timeline.md</code> at the repo root.
+      </div>
+    </main>
+  </div>
 
-## 2020-10-07 — Email forwarded to GUMC board
-1. Stauffer forwards to board & counsel; no change announced. Forward: [Open](./exhibits/Emails Related To/TimStauffer_forward_2020-10-07.pdf)
+  <!-- Lightweight Markdown renderer (Marked) -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" crossorigin="anonymous"></script>
+  <script>
+    // Fetch timeline.md from the same site; try gh-pages then main
+    const BRANCHES = ["gh-pages","main"];
+    const REPO_PATH = ""; // root
+    const FILE = "timeline.md";
 
-## 2020-12-17 — BZ attorney referral noted
-1. Mary Mashburn refers Jack Reynolds (BZ counsel). Email: [Open](./exhibits/Emails Related To/Mary Mashburn referral to BZ atty 2020-12-17.pdf)
+    function tz(a){ try { return encodeURI(a).replace(/#/g,"%23"); } catch { return a; } }
+    function fixLinks(root){
+      root.querySelectorAll("a[href]").forEach(a=>{
+        a.href = tz(a.getAttribute("href"));
+        a.target = "_blank"; a.rel = "noopener";
+      });
+    }
+    function buildTOC(root){
+      const tocWrap = document.getElementById("toc");
+      const nav = document.getElementById("toc-links");
+      nav.innerHTML = "";
+      let n=0;
+      root.querySelectorAll("h2").forEach(h=>{
+        const id = h.id || h.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+        h.id = id;
+        const a = document.createElement("a");
+        a.href = "#"+id; a.textContent = h.textContent.trim();
+        nav.appendChild(a); n++;
+      });
+      tocWrap.hidden = n===0;
+    }
+    // Make dates & descriptions pop:
+    // Split "YYYY-MM-DD — description" into colored spans
+    function styleDates(root){
+      root.querySelectorAll("h2").forEach(h=>{
+        const t = h.textContent;
+        const m = t.split("—");
+        if(m.length>=2){
+          const date = m[0].trim();
+          const desc = m.slice(1).join("—").trim();
+          h.innerHTML = `<span class="date-chip">${date}</span> — <span class="desc-chip">${desc}</span>`;
+        }else{
+          h.innerHTML = `<span class="date-chip">${t.trim()}</span>`;
+        }
+      });
+    }
 
-## 2021-01-04 — Follow-up parking emails to GUMC
-1. Continued correspondence re: parking understanding. Thread: [Open](./exhibits/Emails Related To/518 Main Parking emails to Tim Stauffer_GUMC (3 emails).pdf)
+    async function loadMD(){
+      const mount = document.getElementById("content");
+      let md = null;
+      for (const b of BRANCHES){
+        const url = `${location.origin}${location.pathname.replace(/index\\.html?$/,'')}${REPO_PATH}${FILE}`;
+        // We use relative fetch; if your file is present, this succeeds regardless of branch
+        try{
+          const res = await fetch("./"+FILE, {cache:"no-store"});
+          if(res.ok){ md = await res.text(); break; }
+        }catch(e){}
+        // Fallback to raw if needed (cross-origin ok on GitHub Pages)
+        try{
+          const parts = location.pathname.split("/").filter(Boolean);
+          // e.g. /518-main-timeline/ -> user/project
+          const project = parts[0] || "518-main-timeline";
+          const user = location.hostname.split(".")[0] || "kirk-maker";
+          const raw = `https://raw.githubusercontent.com/${user}/${project}/${b}/${FILE}`;
+          const res2 = await fetch(raw, {cache:"no-store"});
+          if(res2.ok){ md = await res2.text(); break; }
+        }catch(e){}
+      }
+      if(!md){
+        mount.innerHTML = `<div style="border:1px solid var(--line);border-radius:10px;padding:12px;">
+          Could not find <code>${FILE}</code>. Add it to your repo root and refresh.
+        </div>`;
+        return;
+      }
+      marked.setOptions({breaks:true,mangle:false,headerIds:true});
+      mount.innerHTML = marked.parse(md);
 
-## 2021-02-05 — “Groveport, ugh” email to counsel
-1. Context email with city/building issues. Email: [Open](./exhibits/Emails Related To/Re Groveport ugh 2021-02-05.pdf)
+      // Post-process for UX
+      fixLinks(mount);
+      styleDates(mount);
+      buildTOC(mount);
 
-## 2021-02-24 — Variance application materials
-1. Variance package prepared and submitted. Package: [Open](./exhibits/Variance/Parking variance package.pdf)
-2. Counsel email regarding variance. Email: [Open](./exhibits/Variance/RE Variance 518 Main.pdf)
+      // Light polish for lists: if a section has an h2 then ol, it’s likely “exhibits”
+      // Already styled via CSS nth-child. Nothing else required.
+    }
+    loadMD();
+  </script>
+</body>
+</html>
 
-## 2021-04-02 — Staff report for BZA
-1. Staff memo for 04-05-21 BZA meeting. Email: [Open](./exhibits/BZA/FW Staff report for BZA 04-05-21 meeting.pdf)
-
-## 2021-04-05 — Variance approved; minutes and docs
-1. Parking variance approved; Pickett recuses. Evidence: [Open](./exhibits/BZA/Minutes Case 2021-002.pdf)
-2. Related B&Z documents filed. Docs: [Open](./exhibits/BZA/Building and Zoning Documents.pdf)
-
-## 2021-05-12 — CIC board interest email
-1. Email regarding community improvement corporation. Email: [Open](./exhibits/Emails Related To/CIC Board interest 2021-05-12.pdf)
-
-## 2021-11-05 — Renovation plan set prepared
-1. Architect set produced (commercial remodel). Plans: [Open](./exhibits/Plans/DOUGLASS GROUP REV SEALED SET_11-05-2021.pdf)
-
-## 2021-11-17 — GUMC retains litigation counsel
-1. Vorys engagement, privilege log entries. Docs: [Open](./exhibits/Litigation/Privilege Log - Pickett - Final.pdf)
-
-## 2021-11-18 — GUMC cancels parking negotiation
-1. City/GUMC meeting canceled per emails. Email: [Open](./exhibits/Emails Related To/Curious question regarding current GUMC counsel.pdf)
-
-## 2022-08-29 — Occupancy permit approved
-1. CBO Stephen Moore approves occupancy. Permit: [Open](./exhibits/City/Occupancy Permit 2022-08-29.pdf)
-
-## 2022-11-08 — Email to Mayor/City re: rumors
-1. City/GUMC lease rumor & avoidance concerns. Email: [Open](./exhibits/Emails Related To/Parking 518 Main - United Methodist Church.pdf)
-
-## 2023-03-16 — Counsel correspondence
-1. “Re: 518 Main, Groveport” thread. Email: [Open](./exhibits/Emails Related To/Re 518 Main Groveport 2023-03-16.pdf)
-2. Emails to Dave Brobst (GUMC). Emails: [Open](./exhibits/Emails Related To/March emails to Dave Brobst GUMC.pdf)
-
-## 2023-03-17 — Litigation counsel engaged; Fwd: Parking
-1. Litigation attorney discussion. Email: [Open](./exhibits/Litigation/Litigation attorney 2023-03-17.pdf)
-2. Fwd from Stauffer re: parking. Email: [Open](./exhibits/Emails Related To/Fwd Parking from Tim Stauffer GUMC.pdf)
-
-## 2023-04-21 — Demand letter drafted
-1. Demand draft prepared. Draft: [Open](./exhibits/Litigation/Demand draft.pdf)
-
-## 2023-04-23 — Update email to city/admin
-1. Update to BJ King & City Attorney. Email: [Open](./exhibits/Emails Related To/518 Main Parking Update 4_23.pdf)
-
-## 2023-04-28 — Chief’s internal email surfaces
-1. Chief Adams’ message to GPD staff. Email: [Open](./exhibits/Emails Related To/Chief Adams 4_28_23 email to GPD staff.pdf)
-
-## 2023-07-27 — Verified complaint filed
-1. Court filing initiated. Complaint: [Open](./exhibits/Litigation/Verified Complaint-Final.pdf)
-
-## 2023-12-17 — (Add brief neutral summary)
-1. Evidence/communication for this date. Exhibit: [Open](./exhibits/.../2023-12-17.pdf)
-
-## 2024-03-15 — (Add brief neutral summary)
-1. Evidence/communication for this date. Exhibit: [Open](./exhibits/.../2024-03-15.pdf)
-
-## 2024-03-17 — (Add brief neutral summary)
-1. Evidence/communication for this date. Exhibit: [Open](./exhibits/.../2024-03-17.pdf)
-
-## 2025-03-11 — (Add brief neutral summary)
-1. Evidence/communication for this date. Exhibit: [Open](./exhibits/.../2025-03-11.pdf)
