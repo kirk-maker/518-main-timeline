@@ -87,6 +87,15 @@
 
 ## 2024-03-17 — Communication/evidence on record
 1. Evidence/communication for this date. Exhibit: [Open](./exhibits/Docs/2024-03-17.pdf)
+## 2024-03-17 — GPD officer interaction (3 clips)
+1. Neutral, attribution-first summary added; CAD/Report excerpt included in exhibits.
+2. Watch the three clips on Dropbox:
+   - Pt 1 — Watch: [Open](https://www.dropbox.com/scl/fi/r4s5cal3ky88kg4u1tma9/Pt-1-GPD-officer-interaction-20240317144436655_LNRZ78CB64E8076.mp4?rlkey=d59sgmqm88p0eekp6nf6z2izf&st=8la5iyam&dl=0)
+   - Pt 2 — Watch: [Open](https://www.dropbox.com/scl/fi/7lyl5e585od1uyiwxv9yg/Pt-2-GPD-officer-interaction-20240317144935265_LNRZ78CB64E8076.mp4?rlkey=fzu4txjtw57fl8wja8bi8v3pu&st=2kx5j9i6&dl=0)
+   - Pt 3 — Watch: [Open](https://www.dropbox.com/scl/fi/eoi2330yrqdg40kz8jo79/Pt-3-GPD-officer-interaction-20240317150137423_LNRZ78CB64E8076.mp4?rlkey=cpph0gw50w5zu662wdlrpnxmv&st=dthc0gtu&dl=0)
+3. Download all three at once: **[All Clips page](./ripson-03172024-all.html)**
+
+> Tip: for direct-download behavior change `dl=0` to `dl=1` in the Dropbox URLs.
 
 ## 2025-03-11 — Communication/evidence on record
 1. Evidence/communication for this date. Exhibit: [Open](./exhibits/Docs/2025-03-11.pdf)
