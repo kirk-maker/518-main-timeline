@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Link Status – 518 Main Timeline</title>
+<style>
+  body{font:16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:20px;max-width:980px;margin:auto;color:#0f172a}
+  h1{margin:0 0 8px}
+  .note{color:#475569;margin:4px 0 16px}
+  table{width:100%;border-collapse:collapse}
+  th,td{padding:8px;border-bottom:1px solid #e5e7eb;vertical-align:top}
+  .ok{color:#166534;font-weight:700}
+  .warn{color:#92400e;font-weight:700}
+  .bad{color:#991b1b;font-weight:700}
+  code{background:#f1f5f9;padding:2px 4px;border-radius:6px}
+</style>
+</head>
+<body>
+  <h1>Link Status – 518 Main Timeline</h1>
+  <div class="note">Live check of links found in <code>timeline.md</code>. Some external sites may block checks (CORS) – those show as “Unknown”.</div>
+  <div id="summary"></div>
+  <table id="tbl">
+    <thead><tr><th>Link</th><th>Status</th><th>Info</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" crossorigin="anonymous"></script>
+  <script>
+    const STATUS = {OK:'ok', WARN:'warn', BAD:'bad'};
+    function row(link, status, info){
+      const tr=document.createElement('tr');
+      const a = `<a href="${link}" target="_blank" rel="noopener">${link}</a>`;
+      const st = `<span class="${status}">${status.toUpperCase()}</span>`;
+      tr.innerHTML = `<td>${a}</td><td>${st}</td><td>${info||''}</td>`;
+      return tr;
+    }
+    function encodeHref(h){ try { return encodeURI(h).replace(/#/g,'%23'); } catch { return h; } }
+
+    async function main(){
+      const tb=document.querySelector('#tbl tbody');
+      const sum=document.getElementById('summary');
+      let good=0,bad=0,unk=0;
+      // Load timeline.md next to this file
+      let md = '';
+      try{
+        const r = await fetch('./timeline.md',{cache:'no-store'});
+        if(!r.ok) throw 0; md = await r.text();
+      }catch(e){
+        tb.appendChild(row('timeline.md', STATUS.BAD, 'Not found next to this page.'));
+        sum.textContent = 'Could not load timeline.md';
+        return;
+      }
+      // Parse links from markdown (simple regex)
+      const hrefs = [...md.matchAll(/\[(?:[^\]]+)\]\(([^)]+)\)/g)].map(m=>m[1]);
+      // Also catch raw markdown lines that look like URLs
+      hrefs.push(...[...md.matchAll(/https?:\/\/\S+/g)].map(m=>m[0]));
+
+      const unique = [...new Set(hrefs.map(encodeHref))];
+      if(unique.length===0){
+        sum.textContent = 'No links found in timeline.md';
+        return;
+      }
+      sum.textContent = `Found ${unique.length} link(s). Checking…`;
+
+      for(const url of unique){
+        try{
+          const u = url.startsWith('.') ? new URL(url, location.href).href : url;
+          // HEAD is efficient, but many CDNs block it; try GET with no-cors fallback
+          let res = await fetch(u, { method:'HEAD', mode:'no-cors' });
+          // no-cors hides status; try a GET to see if we can read status
+          try {
+            res = await fetch(u, { method:'GET' });
+          } catch(_){/* ignore */}
+          if (res && typeof res.status === 'number') {
+            if (res.status >= 200 && res.status < 400) {
+              good++; tb.appendChild(row(url, STATUS.OK, `HTTP ${res.status}`));
+            } else {
+              bad++; tb.appendChild(row(url, STATUS.BAD, `HTTP ${res.status}`));
+            }
+          } else {
+            unk++; tb.appendChild(row(url, STATUS.WARN, 'Unknown (CORS/no status)'));
+          }
+        }catch(err){
+          bad++; tb.appendChild(row(url, STATUS.BAD, 'Fetch error'));
+        }
+      }
+      sum.innerHTML = `Summary: <strong>${good} OK</strong> · <strong class="warn">${unk} Unknown</strong> · <strong class="bad">${bad} Broken</strong>`;
+    }
+    main();
+  </script>
+</body>
+</html>
